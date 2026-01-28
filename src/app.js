@@ -1,53 +1,55 @@
 import express from "express";
+import connectToDatabase from "./config/dbConnect.js";
+import book from "./models/book.js";
+
+const connection = await connectToDatabase();
+
+connection.on("error", (error) => {
+    console.error("Connection error:", error);
+})
+
+connection.once("open", ()=> {
+    console.log("Database connected");
+})
 
 const app = express();
 app.use(express.json());
 
-
-const livros = [
-    {id : 1, titulo: "O senhor dos aneis"},
-    {id : 2, titulo: "O hobbit"},
-    {id : 3, titulo: "Harry Potter e a pedra filosofal"}
-]
-
-function searchBookById(id){ 
-    return livros.findIndex(book => book.id === Number(id)); 
-}
-
 app.get("/", (req, res) => {
-    res.status(200).send("Curso de Node.js")
+    res.status(200).send("Node.js course API");
 })
 
-app.get("/livros", (req, res) => {
-    res.status(200).json(livros)
+app.get("/books", async (req, res) => {
+    const booksList = await book.find({});
+    res.status(200).json(booksList);
 })
 
-app.post('/livros', (req, res) => {
-    livros.push(req.body);  
-    res.status(201).send("Livro cadastrado!")
-})
+// app.post('/books', (req, res) => {
+//     books.push(req.body);  
+//     res.status(201).send("Book added successfully!");
+// })
 
-app.get('/livros/:id', (req, res) => {
-    const index = searchBookById(req.params.id);
+// app.get('/books/:id', (req, res) => {
+//     const index = searchBookById(req.params.id);
 
-    res.status(200).json(livros[index]);
+//     res.status(200).json(books[index]);
 
-})
+// })
 
-app.put('/livros/:id', (req, res) => { 
-    const index = searchBookById(req.params.id);
+// app.put('/books/:id', (req, res) => { 
+//     const index = searchBookById(req.params.id);
 
-    livros[index].titulo = req.body.titulo;
+//     books[index].title = req.body.title;
 
-    res.status(200).json(livros);
-})
+//     res.status(200).json(books);
+// })
 
-app.delete('/livros/:id', (req, res) => { 
-    const index = searchBookById(req.params.id);
+// app.delete('/books/:id', (req, res) => { 
+//     const index = searchBookById(req.params.id);
 
-    livros.splice(index, 1);
+//     books.splice(index, 1);
 
-    res.status(200).send("Livro deletado com sucesso!");
-})
+//     res.status(200).send("Book deleted successfully!");
+// })
 
 export default app;
