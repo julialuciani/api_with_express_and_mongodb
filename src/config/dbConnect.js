@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 
-async function conectToDatabase(){
-mongoose.connect(process.env.DB_CONNECTION_STRING);
-
-return mongoose.connection;
+async function connectToDatabase(){
+	// await the connection promise so callers receive an active connection
+	await mongoose.connect(process.env.DB_CONNECTION_STRING);
+	return mongoose.connection;
 }
 
-export default conectToDatabase;
-
-
+export default connectToDatabase;
