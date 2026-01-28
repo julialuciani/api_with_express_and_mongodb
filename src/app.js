@@ -1,6 +1,6 @@
 import express from "express";
 import connectToDatabase from "./config/dbConnect.js";
-import book from "./models/book.js";
+import routes from "./routes/index.js";
 
 const connection = await connectToDatabase();
 
@@ -13,16 +13,9 @@ connection.once("open", ()=> {
 })
 
 const app = express();
-app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.status(200).send("Node.js course API");
-})
+routes(app);
 
-app.get("/books", async (req, res) => {
-    const booksList = await book.find({});
-    res.status(200).json(booksList);
-})
 
 // app.post('/books', (req, res) => {
 //     books.push(req.body);  
