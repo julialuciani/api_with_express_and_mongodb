@@ -8,21 +8,12 @@ connection.on("error", (error) => {
     console.error("Connection error:", error);
 })
 
-connection.once("open", ()=> {
+connection.once("open", () => {
     console.log("Database connected");
 })
 
 const app = express();
 
 routes(app);
-
-
-// app.delete('/books/:id', (req, res) => { 
-//     const index = searchBookById(req.params.id);
-
-//     books.splice(index, 1);
-
-//     res.status(200).send("Book deleted successfully!");
-// })
 
 export default app;
