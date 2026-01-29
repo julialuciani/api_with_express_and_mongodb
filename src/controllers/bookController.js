@@ -78,6 +78,19 @@ class BookController {
         }
     }
 
+    static async listBooksByPublisher(req, res) {
+        const publisher = req.query.publisher;
+
+        try {
+            const booksByPublisher = await Book.find({ publisher: publisher });
+            res.status(200).json(booksByPublisher);
+        } catch (error) {
+            res.status(500).json({
+                message: `${error.message} - failed to retrieve books by publisher`
+            })
+        }
+    }
+
 }
 
 
