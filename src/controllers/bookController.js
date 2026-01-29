@@ -4,31 +4,27 @@ import { author } from "../models/author.js";
 
 class BookController {
 
-    static listBooks = async (req, res) => {
+    static listBooks = async (req, res, next) => {
         try {
             const booksList = await Book.find({});
             res.status(200).json(booksList);
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to retrieve books`
-            })
+            next(error);
         }
 
     }
 
-    static listBookById = async (req, res) => {
+    static listBookById = async (req, res, next) => {
         try {
             const id = req.params.id;
             const foundBook = await Book.findById(id);
             res.status(200).json(foundBook);
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to retrieve book`
-            })
+            next(error);
         }
     }
 
-    static registerBook = async (req, res) => {
+    static registerBook = async (req, res, next) => {
         const newBook = req.body;
         try {
 
@@ -44,13 +40,11 @@ class BookController {
                 book: newBook
             });
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to register book`
-            })
+            next(error);
         }
     }
 
-    static updateBook = async (req, res) => {
+    static updateBook = async (req, res, next) => {
         try {
             const id = req.params.id;
             await Book.findByIdAndUpdate(id, req.body);
@@ -58,13 +52,11 @@ class BookController {
                 message: "Book updated successfully"
             });
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to update book`
-            })
+            next(error);
         }
     }
 
-    static deleteBook = async (req, res) => {
+    static deleteBook = async (req, res, next) => {
         try {
             const id = req.params.id;
             await Book.findByIdAndDelete(id);
@@ -72,22 +64,18 @@ class BookController {
                 message: "Book deleted successfully"
             });
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to delete book`
-            })
+            next(error);
         }
     }
 
-    static listBooksByPublisher = async (req, res) => {
+    static listBooksByPublisher = async (req, res, next) => {
         const publisher = req.query.publisher;
 
         try {
             const booksByPublisher = await Book.find({ publisher: publisher });
             res.status(200).json(booksByPublisher);
         } catch (error) {
-            res.status(500).json({
-                message: `${error.message} - failed to retrieve books by publisher`
-            })
+            next(error);
         }
     }
 
