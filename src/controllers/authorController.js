@@ -1,8 +1,9 @@
 import { author } from "../models/author.js";
+import mongoose from "mongoose";
 
 class AuthorController {
 
-    static async listAuthors(req, res) {
+    static listAuthors = async (req, res) => {
         try {
             const authorsList = await author.find({});
             res.status(200).json(authorsList);
@@ -14,19 +15,31 @@ class AuthorController {
 
     }
 
-    static async listAuthorById(req, res) {
+    static listAuthorById = async (req, res) => {
         try {
             const id = req.params.id;
             const foundAuthor = await author.findById(id);
-            res.status(200).json(foundAuthor);
+
+            if (foundAuthor !== null) {
+                res.status(200).json(foundAuthor);
+            } else {
+                res.status(404).json({
+                    message: "Author not found"
+                });
+            }
+
         } catch (error) {
+            if (error instanceof mongoose.Error.CastError) {
+                res.status(400).send({ message: "The provided ID is not valid" });
+                return;
+            }
             res.status(500).json({
-                message: `${error.message} - failed to retrieve author`
+                message: `Erro interno de servidor - ${error.message}`
             })
         }
     }
 
-    static async registerAuthor(req, res) {
+    static registerAuthor = async (req, res) => {
         try {
             const newAuthor = await author.create(req.body);
             res.status(201).json({
@@ -40,7 +53,7 @@ class AuthorController {
         }
     }
 
-    static async updateAuthor(req, res) {
+    static updateAuthor = async (req, res) => {
         try {
             const id = req.params.id;
             await author.findByIdAndUpdate(id, req.body);
@@ -54,7 +67,7 @@ class AuthorController {
         }
     }
 
-    static async deleteAuthor(req, res) {
+    static deleteAuthor = async (req, res) => {
         try {
             const id = req.params.id;
             await author.findByIdAndDelete(id);
