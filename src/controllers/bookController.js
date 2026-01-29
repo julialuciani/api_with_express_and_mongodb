@@ -1,5 +1,4 @@
 import Book from "../models/Book.js";
-import { author } from "../models/author.js";
 
 
 class BookController {
@@ -28,16 +27,13 @@ class BookController {
         const newBook = req.body;
         try {
 
-            const authorFound = await author.findById(newBook.author);
-            const completeBook = {
-                ...newBook, author: {
-                    ...authorFound._doc
-                }
-            }
-            await Book.create(completeBook);
+            const book = new Book(newBook);
+
+            const resultBook = await book.save();
+
             res.status(201).json({
                 message: "Book registered successfully",
-                book: newBook
+                book: resultBook
             });
         } catch (error) {
             next(error);
