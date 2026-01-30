@@ -1,18 +1,24 @@
 import mongoose from "mongoose";
+import BaseError from "../errors/BaseError.js";
+import BadRequest from "../errors/BadRequest.js";
+import ValidationError from "../errors/ValidationError.js";
+import NotFound from "../errors/NotFound.js";
 
 // eslint-disable-next-line no-unused-vars
 function errorHandler(error, req, res, next) {
     console.log(error);
 
     if (error instanceof mongoose.Error.CastError) {
-        res.status(400).send({ message: "The provided ID is not valid" });
+        new BadRequest().sendResponse(res);
     } else if (error instanceof mongoose.Error.ValidationError) {
-        const errorMessages = Object.values(error.errors).map(err => err.message).join("; ");
 
-        res.status(400).send({ message: `The following errors occurred: ${errorMessages}` });
+        new ValidationError(error).sendResponse(res);
+
+    } else if (error instanceof NotFound) {
+        error.sendResponse(res);
     }
     else {
-        res.status(500).send({ message: "Internal Server Error" });
+        new BaseError().sendResponse(res);
     }
 
 }
